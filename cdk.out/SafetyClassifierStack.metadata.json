@@ -1,0 +1,124 @@
+{
+  "/SafetyClassifierStack/IncidentsTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "IncidentsTable307EBBA6"
+      }
+    }
+  ],
+  "/SafetyClassifierStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    }
+  ],
+  "/SafetyClassifierStack/TableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "TableName"
+    }
+  ],
+  "/SafetyClassifierStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/SafetyClassifierStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/SafetyClassifierStack/IncidentsTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "IncidentsTable307EBBA6"
+    }
+  ],
+  "/SafetyClassifierStack/ClassifierFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ClassifierFunction095BED5C"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiD5A789E2"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Account": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiAccount302B91A4"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Endpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiEndpoint0D7DB330"
+    }
+  ],
+  "/SafetyClassifierStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/SafetyClassifierStack/ClassifierFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ClassifierFunctionServiceRole53B60E9A"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/CloudWatchRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiCloudWatchRole8762AB88"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Deployment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiDeploymentC079D50781c96af38bad36d297821ec57a2b16fb"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/DeploymentStage.prod/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiDeploymentStageprodCFBCF474"
+    }
+  ],
+  "/SafetyClassifierStack/ClassifierFunction/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ClassifierFunctionServiceRoleDefaultPolicy269535A2"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Default/classify/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiclassifyB0EAB536"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Default/classify/POST/ApiPermission.SafetyClassifierStackSafetyClassifierApiE367B076.POST..classify": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiclassifyPOSTApiPermissionSafetyClassifierStackSafetyClassifierApiE367B076POSTclassifyB14DD099"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Default/classify/POST/ApiPermission.Test.SafetyClassifierStackSafetyClassifierApiE367B076.POST..classify": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiclassifyPOSTApiPermissionTestSafetyClassifierStackSafetyClassifierApiE367B076POSTclassify0724C7A6"
+    }
+  ],
+  "/SafetyClassifierStack/SafetyClassifierApi/Default/classify/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SafetyClassifierApiclassifyPOST78285669"
+    }
+  ]
+}

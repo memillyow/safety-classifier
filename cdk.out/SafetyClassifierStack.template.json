@@ -1,0 +1,493 @@
+{
+ "Resources": {
+  "IncidentsTable307EBBA6": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "incident_id",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "incident_id",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "safety-incidents"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/IncidentsTable/Resource"
+   }
+  },
+  "ClassifierFunctionServiceRole53B60E9A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/ClassifierFunction/ServiceRole/Resource"
+   }
+  },
+  "ClassifierFunctionServiceRoleDefaultPolicy269535A2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "IncidentsTable307EBBA6",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "IncidentsTable307EBBA6",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ClassifierFunctionServiceRoleDefaultPolicy269535A2",
+    "Roles": [
+     {
+      "Ref": "ClassifierFunctionServiceRole53B60E9A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/ClassifierFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ClassifierFunction095BED5C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "f1f7831aa9a727adcf2932dcf6121135dcd716e241d8fe5cce36964de70211ad.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "INCIDENTS_TABLE": {
+       "Ref": "IncidentsTable307EBBA6"
+      },
+      "MODEL_ID": "us.anthropic.claude-3-haiku-20240307-v1:0"
+     }
+    },
+    "FunctionName": "safety-classifier",
+    "Handler": "handler.lambda_handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ClassifierFunctionServiceRole53B60E9A",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "ClassifierFunctionServiceRoleDefaultPolicy269535A2",
+    "ClassifierFunctionServiceRole53B60E9A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/ClassifierFunction/Resource",
+    "aws:asset:path": "asset.f1f7831aa9a727adcf2932dcf6121135dcd716e241d8fe5cce36964de70211ad",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SafetyClassifierApiD5A789E2": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Workplace safety incident classifier",
+    "Name": "safety-classifier-api"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/Resource"
+   }
+  },
+  "SafetyClassifierApiCloudWatchRole8762AB88": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/CloudWatchRole/Resource"
+   }
+  },
+  "SafetyClassifierApiAccount302B91A4": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "SafetyClassifierApiCloudWatchRole8762AB88",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "SafetyClassifierApiD5A789E2"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/Account"
+   }
+  },
+  "SafetyClassifierApiDeploymentC079D50781c96af38bad36d297821ec57a2b16fb": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Workplace safety incident classifier",
+    "RestApiId": {
+     "Ref": "SafetyClassifierApiD5A789E2"
+    }
+   },
+   "DependsOn": [
+    "SafetyClassifierApiclassifyPOST78285669",
+    "SafetyClassifierApiclassifyB0EAB536"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "SafetyClassifierApiDeploymentStageprodCFBCF474": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "SafetyClassifierApiDeploymentC079D50781c96af38bad36d297821ec57a2b16fb"
+    },
+    "RestApiId": {
+     "Ref": "SafetyClassifierApiD5A789E2"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "SafetyClassifierApiAccount302B91A4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "SafetyClassifierApiclassifyB0EAB536": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "SafetyClassifierApiD5A789E2",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "classify",
+    "RestApiId": {
+     "Ref": "SafetyClassifierApiD5A789E2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/Default/classify/Resource"
+   }
+  },
+  "SafetyClassifierApiclassifyPOSTApiPermissionSafetyClassifierStackSafetyClassifierApiE367B076POSTclassifyB14DD099": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ClassifierFunction095BED5C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "SafetyClassifierApiD5A789E2"
+       },
+       "/",
+       {
+        "Ref": "SafetyClassifierApiDeploymentStageprodCFBCF474"
+       },
+       "/POST/classify"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/Default/classify/POST/ApiPermission.SafetyClassifierStackSafetyClassifierApiE367B076.POST..classify"
+   }
+  },
+  "SafetyClassifierApiclassifyPOSTApiPermissionTestSafetyClassifierStackSafetyClassifierApiE367B076POSTclassify0724C7A6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ClassifierFunction095BED5C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "SafetyClassifierApiD5A789E2"
+       },
+       "/test-invoke-stage/POST/classify"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/Default/classify/POST/ApiPermission.Test.SafetyClassifierStackSafetyClassifierApiE367B076.POST..classify"
+   }
+  },
+  "SafetyClassifierApiclassifyPOST78285669": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ClassifierFunction095BED5C",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "SafetyClassifierApiclassifyB0EAB536"
+    },
+    "RestApiId": {
+     "Ref": "SafetyClassifierApiD5A789E2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/SafetyClassifierApi/Default/classify/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OwW6EMAxEv2XvWbeF9gPYVr1VRWzvKxNcNoUkCDtCCOXfq4RWu6d5Ho9HLqB4foHHAy581N1wHE0L21lQDwoXvmzd6tD6roXtC9uR1Ou3yxDViLbtELb34LQY79LqnmuarWE23kVl0MLW+P0+a+1Ho9ecyxQVlxdkJmGokigu4RT0QHJCJoWT6VFowRW2hliqyeSuG1Za++BEvdE0+tWSk+TeTWfBPj+wQ0Psw6wp1/8Pf507f5BcfZesnWK85fKPqci4PiU+g0xBoqpXuXr3UMJTAeXhh405zsGJsQTNrr9byPP8cgEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SafetyClassifierStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "SafetyClassifierApiEndpoint0D7DB330": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "SafetyClassifierApiD5A789E2"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "SafetyClassifierApiDeploymentStageprodCFBCF474"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "POST your incident JSON to this URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "SafetyClassifierApiD5A789E2"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "SafetyClassifierApiDeploymentStageprodCFBCF474"
+      },
+      "/classify"
+     ]
+    ]
+   }
+  },
+  "TableName": {
+   "Description": "DynamoDB table storing incidents",
+   "Value": {
+    "Ref": "IncidentsTable307EBBA6"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
