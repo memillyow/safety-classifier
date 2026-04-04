@@ -34,7 +34,7 @@ API Gateway (POST /classify)
 
 ## Example Request
 ```bash
-curl -X POST YOUR_API_URL \
+curl -X POST https://z6cjwo9j78.execute-api.us-east-1.amazonaws.com/prod/classify \
   -H "Content-Type: application/json" \
   -d '{"description": "Worker slipped on wet floor near loading dock"}'
 ```
