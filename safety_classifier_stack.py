@@ -23,7 +23,7 @@ class SafetyClassifierStack(Stack):
                 type=dynamodb.AttributeType.STRING,
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
-            removal_policy=RemovalPolicy.DESTROY,
+            removal_policy=RemovalPolicy.DESTROY,  # swap to RETAIN before going to prod
         )
 
         classifier_fn = _lambda.Function(
