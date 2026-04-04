@@ -45,7 +45,7 @@ class SafetyClassifierStack(Stack):
 
         classifier_fn.add_to_role_policy(
             iam.PolicyStatement(
-                actions=["bedrock:InvokeModel"],
+                actions=["bedrock:InvokeModel"],  # least privilege — only grant what lambda needs
                 resources=["*"],
             )
         )
